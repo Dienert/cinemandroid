@@ -34,6 +34,7 @@ import android.widget.TextView;
 public class CinemaClientActivity extends Activity implements View.OnClickListener {
 	private TextView up;
 	private TextView down;
+	private Button send;
 	private SensorManager sensorManager;
 	private Sensor sensor;
 	private float x, y, z;
@@ -49,6 +50,8 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
  
 		up = (TextView) findViewById(R.id.up);
 		down = (TextView) findViewById(R.id.down);
+		send = (Button) findViewById(R.id.btnSend);
+		send.setOnClickListener(this);
 		
 		RotateAnimation ranim = (RotateAnimation)AnimationUtils.loadAnimation(this, R.anim.myanim);
 	    ranim.setFillAfter(true); //For the textview to remain at the same place after the rotation
@@ -57,8 +60,6 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		down.setText("No info yet");
 		up.setText("No info yet");
 		
-		Button btnView = (Button) findViewById(R.id.btnView);
-		btnView.setOnClickListener(this);
 	}
  
 	private void refreshDisplay() {
