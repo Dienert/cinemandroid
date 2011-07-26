@@ -28,6 +28,9 @@ public class MainManager {
 	 */
 	public MainManager(){
 		
+		ServerConnection server = new ServerConnection();
+		server.start();
+		System.out.println("Aceitando conexões");
 		
 		ApplicationContext ctx = ContextRedCinema.getApplicationContext();
 		StreamManager ch = (StreamManager)ctx.getBean("channelManager");
