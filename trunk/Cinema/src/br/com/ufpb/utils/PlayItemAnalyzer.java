@@ -3,6 +3,7 @@
  */
 package br.com.ufpb.utils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -15,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.red5.server.api.stream.IPlayItem;
 import org.red5.server.api.stream.IServerStream;
 
-import br.com.ufpb.PlaylistController;
+import br.com.ufpb.SendOptions;
 
 
 public class PlayItemAnalyzer {
@@ -32,6 +33,8 @@ public class PlayItemAnalyzer {
 	private int delay = 5000;   // delay for 5 sec.
 	private int period = 20000;  // repeat every sec.
 	private Timer timer = new Timer();
+	
+	public static ArrayList<String> ips = new ArrayList<String>();
 
 //	private PlaylistController pcontroller =  new PlaylistController();
 	
@@ -94,7 +97,11 @@ public class PlayItemAnalyzer {
 		
 		timer.schedule(new TimerTask() {
 	        public void run() {
-	        	System.out.println("Hora de requisitar a escolha do usuário");
+	        	for (String ip : ips) {
+	        		System.out.println("Hora de requisitar a escolha do usuário no ip: "+ip);
+	        		SendOptions send = new SendOptions(ip, "Let him in", "Leave him behind");
+	        		send.start();
+	        	}
 	        	//Se nao tiverem tocando o antigo CurrentItem...
 	        	if(!CurrentPlaying()){
 	        		//Assinale-o como livre...
