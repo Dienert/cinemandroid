@@ -55,7 +55,17 @@ public class ServerPlaylist implements IServerPlaylist{
 	
 	private Timer timer = new Timer();
 	
+	private HashMap<String, String[]> hashmap;
+	
+	private String answer = "intro";
+	
+	private static ServerPlaylist instance;
+	
 	public ServerPlaylist(){}
+	
+	public static ServerPlaylist getInstance(){
+		return instance;
+	}
 	
 	public IServerStream getStreamServer(){
 		return serverStream;
@@ -110,7 +120,12 @@ public class ServerPlaylist implements IServerPlaylist{
 	 * Creates a server instance
 	 */
 	public void init() {
+		hashmap = new HashMap<String, String[]>();
+		hashmap.put("intro", new String[]{"let him in", "leave him behind", "1"});
+		hashmap.put("let him in", new String[]{"let him in", "leave him behind", "1.2"});
+		hashmap.put("leave him behind", new String[]{"let him in", "leave him behind", "1.1"});
 		serverStream = StreamUtils.createServerStream(appScope, this.name);
+		instance = this;
 //		if (runOnStartUp) {
 //			start();
 //		} else start();
@@ -137,7 +152,10 @@ public class ServerPlaylist implements IServerPlaylist{
 	public void start(boolean alreadyPlaying)	{
 		
 		SimplePlayItem item = new SimplePlayItem();
-		item.setName("1.flv");
+		
+		String[] strings = hashmap.get(answer);
+		
+		item.setName(strings[2]+".flv");
 		
 		System.out.println("Iniciando o canal: "+this.name);
 		
@@ -149,6 +167,7 @@ public class ServerPlaylist implements IServerPlaylist{
 		
 		System.out.println("adicionando >> "+item.getName());
 			
+		serverStream.removeAllItems();
 		serverStream.addItem(item);
 	
 		serverStream.setRewind(this.repeat);
@@ -317,5 +336,17 @@ public class ServerPlaylist implements IServerPlaylist{
 //	
 	public boolean isStarted(){
 		return started;
+	}
+	
+	public HashMap<String, String[]> getHashMap() {
+		return hashmap;
+	}
+	
+	public String getAnswer() {
+		return answer;
+	}
+	
+	public void setAnswer(String answer) {
+		this.answer = answer;
 	}
 }

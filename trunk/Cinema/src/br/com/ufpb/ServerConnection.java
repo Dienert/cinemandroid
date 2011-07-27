@@ -33,16 +33,21 @@ public class ServerConnection extends Thread {
 				out.flush();
 				in = new ObjectInputStream(connection.getInputStream());
 				String clientIp = connection.getInetAddress().getHostAddress();
-				out.writeObject("Vou cadastrar seu ip: "+clientIp);
-				out.flush();
 				//4. The two parts communicate via the input and output streams
 				try{
 					message = (String)in.readObject();
 					System.out.println("android> "+message);
-					PlayItemAnalyzer.ips.add(clientIp);
-					System.out.println("Cadastrei seu ip");
-					out.writeObject("Cadastrei seu ip");
-					out.flush();
+					String[] messages = message.split("#");
+					if (messages[0].equals("answer")) {
+						ServerPlaylist serverPlaylist = ServerPlaylist.getInstance(); 
+						serverPlaylist.setAnswer(messages[1]);
+						serverPlaylist.start(true);
+					} else if (messages[0].equals("login")) {
+						PlayItemAnalyzer.ips.add(clientIp);
+						System.out.println("Cadastrei o ip: "+clientIp);
+						out.writeObject("Sessão iniciada");
+						out.flush();
+					}
 				}
 				catch(ClassNotFoundException classnot){
 					System.err.println("Data received in unknown format");
