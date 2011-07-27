@@ -23,7 +23,7 @@ public class RequestAccess extends AsyncTask<Void, Void, String>{
 			in = new ObjectInputStream(requestSocket.getInputStream());
 			//3: Communicating with the server
 			try{
-				message = "cadastra meu ip";
+				message = "login";
 				out.writeObject(message);
 				out.flush();
 				System.out.println("server>" + message);

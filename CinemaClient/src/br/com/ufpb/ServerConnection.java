@@ -7,6 +7,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import android.os.AsyncTask;
+import android.view.Gravity;
+import android.widget.TextView;
 
 
 public class ServerConnection extends AsyncTask<Void, Void, String[]> {
@@ -75,8 +77,13 @@ public class ServerConnection extends AsyncTask<Void, Void, String[]> {
 	}
 	
 	protected void onPostExecute(String[] result) {
-		CinemaClientActivity.getInstance().getUp().setText(result[0]);
-		CinemaClientActivity.getInstance().getDown().setText(result[1]);
+		TextView up = CinemaClientActivity.getInstance().getUp(); 
+		up.setText(result[0]);
+		TextView down = CinemaClientActivity.getInstance().getDown();
+		down.setText(result[1]);
+		ServerConnection server = new ServerConnection();
+		server.execute();
+		
 	}
 
 }
