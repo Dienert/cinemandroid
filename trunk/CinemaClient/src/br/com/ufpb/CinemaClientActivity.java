@@ -25,6 +25,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
@@ -39,7 +40,7 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 	private SensorManager sensorManager;
 	private Sensor sensor;
 	private float x, y, z;
-	private String answerServer = "";
+	private String answer = "";
 	
 	private static CinemaClientActivity instance;
 	
@@ -76,6 +77,7 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 	    down.setAnimation(ranim);
 		
 		down.setText("Ainda não disponível");
+		down.setGravity(Gravity.CENTER_HORIZONTAL);
 		up.setText("Ainda não disponível");
 		
 	}
@@ -104,45 +106,25 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 			if (y > 8) {
 				up.setTextColor(Color.GREEN);
 				down.setTextColor(Color.RED);
+				answer = up.getText().toString();
 			} else if (y < -8) {
 				up.setTextColor(Color.RED);
 				down.setTextColor(Color.GREEN);
+				answer = down.getText().toString();
 			} else {
 				up.setTextColor(Color.GRAY);
 				down.setTextColor(Color.GRAY);
+				answer = "neutro";
 			}
 		}
  
 	};
 
 	public void onClick(View arg0) {
-		String url = "http://192.168.0.160:8080/Cinema/rest/services/printSucess?answer=";
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(url);
-		DocumentBuilder builder;
-		try {
-			ResponseHandler<String> responseHandler = new BasicResponseHandler();
-			String responseBody = httpClient.execute(httpGet, responseHandler);
-//			HttpResponse httpResponse = httpClient.execute(httpGet);
-//			int responseCode = httpResponse.getStatusLine().getStatusCode();
-//			String message = httpResponse.getStatusLine().getReasonPhrase();
-//			HttpEntity entity = httpResponse.getEntity();
-//			InputStream insStream = entity.getContent();
-//			String response = convertStreamToString(insStream);
-//			insStream.close();
-//			answerServer = responseCode+message+response;
-			answerServer = responseBody;
-		} catch (ClientProtocolException e) {
-			answerServer = e.getMessage();
-			Log.e(getString(R.string.app_name), e.getMessage());
-		} catch (IOException e) {
-			answerServer = e.getMessage();
-			Log.e(getString(R.string.app_name), e.getMessage());
-		} catch (FactoryConfigurationError e) {
-			answerServer = e.getMessage();
-			Log.e(getString(R.string.app_name), e.getMessage());
+		if (!answer.equals("neutro")) {
+			SendAnswer sendAnswer = new SendAnswer();
+			sendAnswer.execute("answer#"+answer);
 		}
-
 	}
 	
     private static String convertStreamToString(InputStream is) {
