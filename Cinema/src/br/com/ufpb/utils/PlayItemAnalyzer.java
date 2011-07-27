@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -17,6 +18,7 @@ import org.red5.server.api.stream.IPlayItem;
 import org.red5.server.api.stream.IServerStream;
 
 import br.com.ufpb.SendOptions;
+import br.com.ufpb.ServerPlaylist;
 
 
 public class PlayItemAnalyzer {
@@ -98,8 +100,11 @@ public class PlayItemAnalyzer {
 		timer.schedule(new TimerTask() {
 	        public void run() {
 	        	for (String ip : ips) {
+	        		HashMap<String, String[]> hashMap = ServerPlaylist.getInstance().getHashMap();
+	        		String answer = ServerPlaylist.getInstance().getAnswer();
+	        		String[] strings = hashMap.get(answer);
 	        		System.out.println("Hora de requisitar a escolha do usuário no ip: "+ip);
-	        		SendOptions send = new SendOptions(ip, "Let him in", "Leave him behind");
+	        		SendOptions send = new SendOptions(ip, strings[0], strings[1]);
 	        		send.start();
 	        	}
 	        	//Se nao tiverem tocando o antigo CurrentItem...
