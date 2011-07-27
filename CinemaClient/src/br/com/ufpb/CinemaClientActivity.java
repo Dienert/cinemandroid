@@ -24,7 +24,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -32,21 +31,30 @@ import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.TextView;
 
-
 public class CinemaClientActivity extends Activity implements View.OnClickListener {
 	private TextView up;
 	private TextView down;
+	private TextView messages;
 	private Button send;
 	private SensorManager sensorManager;
 	private Sensor sensor;
 	private float x, y, z;
 	private String answerServer = "";
-	private Vibrator v;
-	private int change = 1;
+	
+	private static CinemaClientActivity instance;
+	
+	public static CinemaClientActivity getInstance() {
+		return instance;
+	}
  
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		instance = this;
 		super.onCreate(savedInstanceState);
+		
+		RequestAccess reqAccess = new RequestAccess();
+		reqAccess.execute();
+		
 		setContentView(R.layout.main);
  
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -54,25 +62,22 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
  
 		up = (TextView) findViewById(R.id.up);
 		down = (TextView) findViewById(R.id.down);
+		messages = (TextView) findViewById(R.id.messages);
+		
+		messages.setTextColor(Color.RED);
+		
+		ServerConnection serverConnection = new ServerConnection();
+		serverConnection.execute();
 		send = (Button) findViewById(R.id.btnSend);
 		send.setOnClickListener(this);
 		
 		RotateAnimation ranim = (RotateAnimation)AnimationUtils.loadAnimation(this, R.anim.myanim);
 	    ranim.setFillAfter(true); //For the textview to remain at the same place after the rotation
 	    down.setAnimation(ranim);
-	    
-	    
 		
-		down.setText("No info yet");
-		up.setText("No info yet");
+		down.setText("Ainda não disponível");
+		up.setText("Ainda não disponível");
 		
-		v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-	}
- 
-	private void refreshDisplay() {
-//		String output = String.format("x is: %f / y is: %f / z is: %f\n%s\n%s", x, y, z, answer, answerServer);
-		up.setText("Sim");
-		down.setText("Nao");
 	}
  
 	@Override
@@ -96,27 +101,16 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 			x = event.values[0];
 			y = event.values[1];
 			z = event.values[2];
-			if (y > 5) {
+			if (y > 8) {
 				up.setTextColor(Color.GREEN);
 				down.setTextColor(Color.RED);
-				if(change != 1){
-					v.vibrate(50);
-					change = 1;
-				}
-			} else if (y < -6) {
+			} else if (y < -8) {
 				up.setTextColor(Color.RED);
 				down.setTextColor(Color.GREEN);
-				if(change != 2){
-					v.vibrate(50);
-					change = 2;
-				}
 			} else {
 				up.setTextColor(Color.GRAY);
 				down.setTextColor(Color.GRAY);
-				change = 3;
 			}
-			
-			refreshDisplay();
 		}
  
 	};
@@ -148,7 +142,6 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 			answerServer = e.getMessage();
 			Log.e(getString(R.string.app_name), e.getMessage());
 		}
-		refreshDisplay();
 
 	}
 	
@@ -173,4 +166,29 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
         }
         return sb.toString();
     }
+
+	public TextView getUp() {
+		return up;
+	}
+
+	public void setUp(TextView up) {
+		this.up = up;
+	}
+
+	public TextView getDown() {
+		return down;
+	}
+
+	public void setDown(TextView down) {
+		this.down = down;
+	}
+
+	public TextView getMessages() {
+		return messages;
+	}
+
+	public void setMessages(TextView messages) {
+		this.messages = messages;
+	}
+    
 }
