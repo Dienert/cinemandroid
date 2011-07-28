@@ -23,6 +23,7 @@ import org.red5.server.api.stream.support.SimplePlayItem;
 import org.red5.server.api.stream.support.StreamUtils;
 
 import br.com.ufpb.utils.DateUtil;
+import br.com.ufpb.utils.PlayItemAnalyzer;
 
 @SuppressWarnings("unchecked")
 public class ServerPlaylist implements IServerPlaylist{
@@ -122,8 +123,8 @@ public class ServerPlaylist implements IServerPlaylist{
 	public void init() {
 		hashmap = new HashMap<String, String[]>();
 		hashmap.put("intro", new String[]{"let him in", "leave him behind", "1"});
-		hashmap.put("let him in", new String[]{"let him in", "leave him behind", "1.2"});
-		hashmap.put("leave him behind", new String[]{"let him in", "leave him behind", "1.1"});
+		hashmap.put("let him in", new String[]{"intro", "leave him behind", "1.2"});
+		hashmap.put("leave him behind", new String[]{"let him in", "intro", "1.1"});
 		serverStream = StreamUtils.createServerStream(appScope, this.name);
 		instance = this;
 //		if (runOnStartUp) {
@@ -155,7 +156,14 @@ public class ServerPlaylist implements IServerPlaylist{
 		
 		String[] strings = hashmap.get(answer);
 		
-		item.setName(strings[2]+".flv");
+		String versao = StreamManager.getInstance().getVersao();
+		
+		if (versao != null && !versao.equals("")) {
+			item.setName(strings[2]+versao+".flv");
+		} else {
+			item.setName(strings[2]+".flv");
+		}
+		
 		
 		System.out.println("Iniciando o canal: "+this.name);
 		
@@ -177,7 +185,10 @@ public class ServerPlaylist implements IServerPlaylist{
 			serverStream.setItem(0);
 		}
 		started = true;
-			
+		PlayItemAnalyzer analyzer = StreamManager.getAnalyzer(this.name);
+		if (analyzer != null) {
+			analyzer.run();
+		}
 		log.info("FINISH");
 	}
 	/**

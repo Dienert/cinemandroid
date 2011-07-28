@@ -42,9 +42,15 @@ public class ServerConnection extends Thread {
 						ServerPlaylist serverPlaylist = ServerPlaylist.getInstance(); 
 						serverPlaylist.setAnswer(messages[1]);
 						serverPlaylist.start(true);
+						out.writeObject("Opção recebida!");
+						out.flush();
 					} else if (messages[0].equals("login")) {
-						PlayItemAnalyzer.ips.add(clientIp);
-						System.out.println("Cadastrei o ip: "+clientIp);
+						if (!PlayItemAnalyzer.ips.contains(clientIp)){
+							PlayItemAnalyzer.ips.add(clientIp);
+							System.out.println("Cadastrei o ip: "+clientIp);
+						} else {
+							System.out.println("Ip já cadastrado: "+clientIp);
+						}
 						out.writeObject("Sessão iniciada");
 						out.flush();
 					}

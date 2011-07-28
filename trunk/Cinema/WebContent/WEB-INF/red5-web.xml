@@ -28,14 +28,17 @@
 	
 	<bean id="streamFilenameGenerator" class="br.com.ufpb.CustomFilenameGenerator">
 		<property name="playbackPath">
-			<value>/home/dienert/Desktop/Red5/</value>
-<!-- 			<value>C:\\red5\\zombies\\</value> -->
+<!--			<value>/home/dienert/Desktop/Red5/</value>-->
+ 			<value>C:\\red5\\zombies\\</value> 
         	</property>
 	</bean>
 	
 	<!-- Gerenciador de Canal -->
 	<bean id="channelManager" class="br.com.ufpb.StreamManager">
 		<property name="webScopeApp" ref="web.scope" />
+		<property name="versao">
+			<value>pequeno</value>
+		</property>
 	</bean>
 	
 	<bean id="mainManager" class="br.com.ufpb.MainManager">
