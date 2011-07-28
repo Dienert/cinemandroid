@@ -6,14 +6,15 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import android.content.Context;
 import android.os.AsyncTask;
-import android.view.Gravity;
+import android.os.Vibrator;
 import android.widget.TextView;
 
 
-public class ServerConnection extends AsyncTask<Void, Void, String[]> {
+public class AnwersReceiver extends AsyncTask<Void, Void, String[]> {
 	
-	public ServerConnection() {}
+	public AnwersReceiver() {}
 	
 	ServerSocket providerSocket;
 	Socket connection = null;
@@ -77,11 +78,16 @@ public class ServerConnection extends AsyncTask<Void, Void, String[]> {
 	}
 	
 	protected void onPostExecute(String[] result) {
-		TextView up = CinemaClientActivity.getInstance().getUp(); 
+		CinemaClientActivity activity = CinemaClientActivity.getInstance();
+		TextView up = activity.getUp(); 
 		up.setText(result[0]);
-		TextView down = CinemaClientActivity.getInstance().getDown();
+		TextView down = activity.getDown();
 		down.setText(result[1]);
-		ServerConnection server = new ServerConnection();
+		TextView messages = activity.getMessages();
+		Vibrator v = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+		v.vibrate(600);
+		messages.setText("Novas opções recebidas");
+		AnwersReceiver server = new AnwersReceiver();
 		server.execute();
 		
 	}

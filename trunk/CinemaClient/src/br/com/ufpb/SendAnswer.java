@@ -21,7 +21,9 @@ public class SendAnswer extends AsyncTask<String, Void, String>{
 	protected String doInBackground(String... params) {
 		try{
 			//1. creating a socket to connect to the server
-			requestSocket = new Socket("192.168.0.160", 2004);
+			String ip = "192.168.0.160";
+//			String ip = "150.165.132.171";
+			requestSocket = new Socket(ip, 2004);
 			//2. get Input and Output streams
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
@@ -30,15 +32,13 @@ public class SendAnswer extends AsyncTask<String, Void, String>{
 			try{
 				out.writeObject(params[0]);
 				out.flush();
-				System.out.println("server>" + message);
 				message = (String)in.readObject();
 			}
 			catch(ClassNotFoundException classNot){
-				System.err.println("data received in unknown format");
+				message = "unknown format received";
 			}
 		} catch(UnknownHostException unknownHost){
 			message = "Host desconhecido";
-			System.err.println("You are trying to connect to an unknown host!");
 		} catch(IOException ioException){
 			message = ioException.getMessage();
 			ioException.printStackTrace();
