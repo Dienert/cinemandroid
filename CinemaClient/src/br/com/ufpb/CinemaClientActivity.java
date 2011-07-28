@@ -24,6 +24,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.AsyncTask.Status;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -41,6 +42,10 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 	private Sensor sensor;
 	private float x, y, z;
 	private String answer = "";
+	
+	private String unavailable = "ainda não disponível";
+	
+	private static AnwersReceiver answersReceiver;
 	
 	private static CinemaClientActivity instance;
 	
@@ -66,9 +71,11 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		messages = (TextView) findViewById(R.id.messages);
 		
 		messages.setTextColor(Color.RED);
+		if (answersReceiver == null) {
+			answersReceiver = new AnwersReceiver();
+			answersReceiver.execute();
+		}
 		
-		ServerConnection serverConnection = new ServerConnection();
-		serverConnection.execute();
 		send = (Button) findViewById(R.id.btnSend);
 		send.setOnClickListener(this);
 		
@@ -76,9 +83,9 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 	    ranim.setFillAfter(true); //For the textview to remain at the same place after the rotation
 	    down.setAnimation(ranim);
 		
-		down.setText("Ainda não disponível");
+		down.setText(unavailable);
 		down.setGravity(Gravity.CENTER_HORIZONTAL);
-		up.setText("Ainda não disponível");
+		up.setText(unavailable);
 		
 	}
  
@@ -87,6 +94,12 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		super.onResume();
 		sensorManager.registerListener(accelerationListener, sensor,
 				SensorManager.SENSOR_DELAY_GAME);
+		RequestAccess reqAccess = new RequestAccess();
+		reqAccess.execute();
+		if (answersReceiver == null) {
+			answersReceiver = new AnwersReceiver();
+			answersReceiver.execute();
+		}
 	}
  
 	@Override
@@ -121,6 +134,10 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 	};
 
 	public void onClick(View arg0) {
+		messages.setText("Enviando opções...");
+		up.setText(unavailable);
+		down.setText(unavailable);
+		
 		if (!answer.equals("neutro")) {
 			SendAnswer sendAnswer = new SendAnswer();
 			sendAnswer.execute("answer#"+answer);

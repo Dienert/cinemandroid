@@ -15,8 +15,9 @@ public class RequestAccess extends AsyncTask<Void, Void, String>{
 	protected String doInBackground(Void... v) {
 		try{
 			//1. creating a socket to connect to the server
-			requestSocket = new Socket("192.168.0.160", 2004);
-			System.out.println("Connected to 192.168.0.160 in port 2004");
+			String ip = "192.168.0.160";
+//			String ip = "150.165.132.171";
+			requestSocket = new Socket(ip, 2004);
 			//2. get Input and Output streams
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
@@ -26,15 +27,13 @@ public class RequestAccess extends AsyncTask<Void, Void, String>{
 				message = "login";
 				out.writeObject(message);
 				out.flush();
-				System.out.println("server>" + message);
 				message = (String)in.readObject();
 			}
 			catch(ClassNotFoundException classNot){
-				System.err.println("data received in unknown format");
+				message = "unknown format received";
 			}
 		} catch(UnknownHostException unknownHost){
 			message = "Host desconhecido";
-			System.err.println("You are trying to connect to an unknown host!");
 		} catch(IOException ioException){
 			message = ioException.getMessage();
 			ioException.printStackTrace();
