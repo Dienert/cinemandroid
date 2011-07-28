@@ -23,8 +23,10 @@ public class StreamManager {
     
 	private IScope webScopeApp;
 	
+	private static String versao;
+	
 	private List<IServerPlaylist> streams = new LinkedList<IServerPlaylist>();
-	private List<PlayItemAnalyzer> playItemAnalyzers = new LinkedList<PlayItemAnalyzer>();
+	private static List<PlayItemAnalyzer> playItemAnalyzers = new LinkedList<PlayItemAnalyzer>();
 	
 	public StreamManager(){}
 
@@ -85,9 +87,7 @@ public class StreamManager {
 		
 		if(channel != null){
 			
-			PlayItemAnalyzer pa = getAnalyzer(channelName);
 			channel.start(false);
-			pa.run();
 			return true;
 			
 		} else {
@@ -182,12 +182,15 @@ public class StreamManager {
 	 * @param channelName
 	 * @return the analyzer if it was found, null if it wasn't. 
 	 */
-	private synchronized PlayItemAnalyzer getAnalyzer(String channelName){
+	public static synchronized PlayItemAnalyzer getAnalyzer(String channelName){
 		for (PlayItemAnalyzer analyzer : playItemAnalyzers) {
 			if(analyzer.getServer().getName().equals(channelName)){
+				System.out.println("Encontrei analyzer do canal: "+channelName);
 				return analyzer;
 			}
 		}
+		System.out.println("Não Encontrei analyzer do canal: "+channelName);
+		System.out.println("Tamanho da lista de analyzers: "+playItemAnalyzers.size());
 		return null;
 	}
 	
@@ -202,4 +205,13 @@ public class StreamManager {
 	public void setWebScopeApp(IScope webScopeApp) {
 		this.webScopeApp = webScopeApp;
 	}
+
+	public String getVersao() {
+		return versao;
+	}
+
+	public void setVersao(String versao) {
+		StreamManager.versao = versao;
+	}
+	
 }
