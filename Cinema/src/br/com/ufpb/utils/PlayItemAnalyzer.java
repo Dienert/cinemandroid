@@ -175,4 +175,9 @@ public class PlayItemAnalyzer {
 	public void setFreeItemIndex(int freeItemIndex) {
 		this.freeItemIndex = freeItemIndex;
 	}
+
+	public IPlayItem getFreeItem() {
+		return freeItem;
+	}
+	
 }

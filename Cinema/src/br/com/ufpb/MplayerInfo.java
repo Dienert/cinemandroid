@@ -32,10 +32,8 @@ public class MplayerInfo {
 	public void run() {
 		try {
 
-			long time = System.currentTimeMillis();
-			
 			pp = new PrintProcessOutput(exec, listener);
-			pp.start();
+			pp.run();
 			
 			int errorCode = pp.getProcess().waitFor();
 			
@@ -70,34 +68,6 @@ public class MplayerInfo {
 		private ErrorHandler listener = null;
 		private boolean isError = false;
 
-		public PrintProcessOutput(Process p) {
-			process = p;
-
-			if (p != null) {
-				in = p.getInputStream();
-			}
-
-			printError = new PrintProcessOutput(p.getErrorStream(), false);
-			process = p;
-		}
-		
-		public PrintProcessOutput(Process p, ErrorHandler e) {
-			process = p;
-
-			if (p != null) {
-				in = p.getInputStream();
-			}
-			
-			if( e != null) {
-				this.listener = e;
-				printError = new PrintProcessOutput(p.getErrorStream(), true);
-			} else {
-				printError = new PrintProcessOutput(p.getErrorStream(), false);
-			}
-			
-			process = p;
-		}
-
 		public StringBuffer getSaida() {
 			return saida;
 		}
@@ -126,7 +96,6 @@ public class MplayerInfo {
 			}			
 		}
 		
-		@Override
 		public void run() {
 			saida=new StringBuffer();
 
