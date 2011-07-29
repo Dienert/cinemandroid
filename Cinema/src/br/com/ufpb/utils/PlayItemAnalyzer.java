@@ -73,20 +73,31 @@ public class PlayItemAnalyzer {
 	}
 	
 	/**
-	 * Next time to dispatch analyzer
+	 * Next time to send options to the client
 	 * a verificação
 	 * @return Date 	next date 
 	 */
-	public Date nextTime(){
+	public Date nextSendOptionsTime(){
 		Calendar cal = new GregorianCalendar();
 		cal.setTimeZone(TimeZone.getDefault());
-		//Proximo minuto de verificacao
 		cal.setTimeInMillis(cal.getTimeInMillis());
-		System.out.println("Iniciado às "+cal.getTime());
 		cal.setTimeInMillis(cal.getTimeInMillis()+currentItem.getLength()-20*1000);
 		System.out.println("###Requisitar escolha às: "+cal.getTime());
-		
-		
+		return cal.getTime();
+	}
+	
+	/**
+	 * Next time to automatically decide and erase option on the client
+	 * a verificação
+	 * @return Date 	next date 
+	 */
+	public Date nextDecideAndEraseTime(){
+		Calendar cal = new GregorianCalendar();
+		cal.setTimeZone(TimeZone.getDefault());
+		cal.setTimeInMillis(cal.getTimeInMillis());
+		System.out.println("Iniciado às "+cal.getTime());
+		cal.setTimeInMillis(cal.getTimeInMillis()+currentItem.getLength());
+		System.out.println("###Decidir automaticamente às: "+cal.getTime());
 		return cal.getTime();
 	}
 	
@@ -101,7 +112,7 @@ public class PlayItemAnalyzer {
 	        public void run() {
 	        	for (String ip : ips) {
 	        		HashMap<String, String[]> hashMap = ServerPlaylist.getInstance().getHashMap();
-	        		String answer = ServerPlaylist.getInstance().getAnswer();
+	        		String answer = ServerPlaylist.getInstance().getCurrentVideo();
 	        		String[] strings = hashMap.get(answer);
 	        		System.out.println("Hora de requisitar a escolha do usuário no ip: "+ip);
 	        		SendOptions send = new SendOptions(ip, strings[0], strings[1]);
@@ -129,7 +140,25 @@ public class PlayItemAnalyzer {
 //	        		goTimerGranulate();
 //	        	}
 	        }
-	    },nextTime());
+	    },nextSendOptionsTime());
+		
+		timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				ServerPlaylist serverPlaylist = ServerPlaylist.getInstance();
+				String answer = ServerPlaylist.getInstance().getAnswer();
+				serverPlaylist.setCurrentVideo(answer);
+				serverPlaylist.start(true);
+				for (String ip : ips) {
+	        		System.out.println("Cancelando as escolhas do usuário no ip: "+ip);
+	        		String unavailable = "ainda não disponível";
+	        		SendOptions send = new SendOptions(ip, unavailable, unavailable);
+	        		send.start();
+	        	}
+				
+			}
+		}, nextDecideAndEraseTime());
 	}
 	/**
 	 * Seek new currentItem in a shorter interval of time. 
