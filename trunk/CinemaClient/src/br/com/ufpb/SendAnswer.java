@@ -21,9 +21,7 @@ public class SendAnswer extends AsyncTask<String, Void, String>{
 	protected String doInBackground(String... params) {
 		try{
 			//1. creating a socket to connect to the server
-			String ip = "192.168.0.160";
-//			String ip = "150.165.132.171";
-			requestSocket = new Socket(ip, 2004);
+			requestSocket = new Socket(CinemaClientActivity.getIp(), 2004);
 			//2. get Input and Output streams
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();

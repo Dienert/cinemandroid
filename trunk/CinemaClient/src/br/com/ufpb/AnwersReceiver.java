@@ -22,7 +22,7 @@ public class AnwersReceiver extends AsyncTask<Void, Void, String[]> {
 	private Socket connection = null;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
-	private String[] messages = {"não recebido", "não recebido"};
+	private String[] messages = {CinemaClientActivity.unavailable, CinemaClientActivity.unavailable};
 	private int SIMPLE_NOTFICATION_ID;
 	
 	public AnwersReceiver() {}
@@ -88,15 +88,17 @@ public class AnwersReceiver extends AsyncTask<Void, Void, String[]> {
 		up.setText(result[0]);
 		TextView down = activity.getDown();
 		down.setText(result[1]);
-		TextView messages = activity.getMessages();
-		Vibrator v = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
-		v.vibrate(600);
-		messages.setText("Novas opções recebidas");
+		if (!up.getText().equals(CinemaClientActivity.unavailable)) {
+			TextView messages = activity.getMessages();
+			Vibrator v = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+			v.vibrate(600);
+			messages.setText("Novas opções recebidas");
+			if (activity.isPaused()) {
+				notifyOptions();
+			}
+		}
 		AnwersReceiver server = new AnwersReceiver();
 		server.execute();
-		if (activity.isPaused()) {
-			notifyOptions();
-		}
 		
 	}
 	
