@@ -40,8 +40,7 @@ public class ServerConnection extends Thread {
 					String[] messages = message.split("#");
 					if (messages[0].equals("answer")) {
 						ServerPlaylist serverPlaylist = ServerPlaylist.getInstance(); 
-						serverPlaylist.setAnswer(messages[1]);
-						serverPlaylist.start(true);
+						serverPlaylist.addAnswer(messages[1]);
 						out.writeObject("Opção recebida!");
 						out.flush();
 					} else if (messages[0].equals("login")) {
