@@ -9,21 +9,28 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class CinemaClientActivity extends Activity implements View.OnClickListener {
 	private TextView up;
 	private TextView down;
 	private TextView messages;
-	private Button send;
+	private ImageButton send;
 	private SensorManager sensorManager;
 	private Sensor sensor;
 	private float x, y, z;
 	private String answer = "";
+	private Vibrator v;
+	private int change = 1;
+
 	private boolean paused = false;
 	private static boolean sessionStarted = false;
 	private static 	String ip =
@@ -32,7 +39,7 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 //					 "150.165.132.171"
 			;
 	
-	public static String unavailable = "ainda não disponível";
+	public static String unavailable = "ainda nï¿½o disponï¿½vel";
 	
 	private static AnwersReceiver answersReceiver;
 	
@@ -64,18 +71,26 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		up.setText(unavailable);
 		
 		messages.setTextColor(Color.RED);
+		messages.setTextSize(30);
 		if (answersReceiver == null) {
 			answersReceiver = new AnwersReceiver();
 			answersReceiver.execute();
 		}
 		
-		send = (Button) findViewById(R.id.btnSend);
+		send = (ImageButton)findViewById(R.id.btnImageSend);
 		
 		RotateAnimation ranim = (RotateAnimation)AnimationUtils.loadAnimation(this, R.anim.myanim);
 	    ranim.setFillAfter(true); //For the textview to remain at the same place after the rotation
+
+	    down.setAnimation(ranim);		
+		down.setText("Ainda nao disponivel");
+		down.setGravity(Gravity.CENTER_HORIZONTAL);
+		up.setText("Ainda nao disponivel");
+
 	    down.setAnimation(ranim);
+
 		
-		
+		v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 	}
  
 	@Override
@@ -116,32 +131,49 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 			x = event.values[0];
 			y = event.values[1];
 			z = event.values[2];
-			if (y > 8) {
+			if (y > 5) {
 				if (!up.getText().equals(unavailable)) {
 					up.setTextColor(Color.GREEN);
+					up.setTextSize(25);
 					down.setTextColor(Color.RED);
+					down.setTextSize(10);
 					answer = up.getText().toString();
 					send.setOnClickListener(instance);
 				}
-			} else if (y < -8) {
+				if(change != 1){
+                    v.vibrate(50);
+                    change = 1;
+				}
+			} else if (y < -7) {
 				if (!up.getText().equals(unavailable)) {
 					up.setTextColor(Color.RED);
+					up.setTextSize(10);
+					down.setTextSize(25);
 					down.setTextColor(Color.GREEN);
 					answer = down.getText().toString();
 					send.setOnClickListener(instance);
 				}
+				if(change != 2){
+                    v.vibrate(50);
+                    change = 2;
+				}
+
 			} else {
 				up.setTextColor(Color.GRAY);
 				down.setTextColor(Color.GRAY);
 				answer = "neutro";
+
+				change = 3;
+
 				send.setOnClickListener(null);
+
 			}
 		}
  
 	};
 
 	public void onClick(View arg0) {
-		messages.setText("Enviando opções...");
+		messages.setText("Enviando opÃ§Ãµes...");
 		SendAnswer sendAnswer = new SendAnswer();
 		sendAnswer.execute("answer#"+answer);
 		up.setText(unavailable);
