@@ -1,32 +1,14 @@
 package br.com.ufpb;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.FactoryConfigurationError;
-
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import br.com.ufpb.R;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.AsyncTask.Status;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
@@ -42,6 +24,8 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 	private Sensor sensor;
 	private float x, y, z;
 	private String answer = "";
+	private boolean paused = false;
+	private static boolean sessionStarted = false;
 	
 	private String unavailable = "ainda não disponível";
 	
@@ -58,8 +42,10 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		instance = this;
 		super.onCreate(savedInstanceState);
 		
-		RequestAccess reqAccess = new RequestAccess();
-		reqAccess.execute();
+		if (!sessionStarted) {
+			RequestAccess reqAccess = new RequestAccess();
+			reqAccess.execute();
+		}
 		
 		setContentView(R.layout.main);
  
@@ -69,6 +55,8 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		up = (TextView) findViewById(R.id.up);
 		down = (TextView) findViewById(R.id.down);
 		messages = (TextView) findViewById(R.id.messages);
+		down.setText(unavailable);
+		up.setText(unavailable);
 		
 		messages.setTextColor(Color.RED);
 		if (answersReceiver == null) {
@@ -77,25 +65,20 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		}
 		
 		send = (Button) findViewById(R.id.btnSend);
-		send.setOnClickListener(this);
 		
 		RotateAnimation ranim = (RotateAnimation)AnimationUtils.loadAnimation(this, R.anim.myanim);
 	    ranim.setFillAfter(true); //For the textview to remain at the same place after the rotation
 	    down.setAnimation(ranim);
 		
-		down.setText(unavailable);
-		down.setGravity(Gravity.CENTER_HORIZONTAL);
-		up.setText(unavailable);
 		
 	}
  
 	@Override
 	protected void onResume() {
 		super.onResume();
+		paused = false;
 		sensorManager.registerListener(accelerationListener, sensor,
 				SensorManager.SENSOR_DELAY_GAME);
-		RequestAccess reqAccess = new RequestAccess();
-		reqAccess.execute();
 		if (answersReceiver == null) {
 			answersReceiver = new AnwersReceiver();
 			answersReceiver.execute();
@@ -107,6 +90,18 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		sensorManager.unregisterListener(accelerationListener);
 		super.onStop();
 	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		paused = true;
+	}
+	
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		paused = false;
+		
+	}
  
 	private SensorEventListener accelerationListener = new SensorEventListener() {
 		public void onAccuracyChanged(Sensor sensor, int acc) {
@@ -117,17 +112,24 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 			y = event.values[1];
 			z = event.values[2];
 			if (y > 8) {
-				up.setTextColor(Color.GREEN);
-				down.setTextColor(Color.RED);
-				answer = up.getText().toString();
+				if (!up.getText().equals(unavailable)) {
+					up.setTextColor(Color.GREEN);
+					down.setTextColor(Color.RED);
+					answer = up.getText().toString();
+					send.setOnClickListener(instance);
+				}
 			} else if (y < -8) {
-				up.setTextColor(Color.RED);
-				down.setTextColor(Color.GREEN);
-				answer = down.getText().toString();
+				if (!up.getText().equals(unavailable)) {
+					up.setTextColor(Color.RED);
+					down.setTextColor(Color.GREEN);
+					answer = down.getText().toString();
+					send.setOnClickListener(instance);
+				}
 			} else {
 				up.setTextColor(Color.GRAY);
 				down.setTextColor(Color.GRAY);
 				answer = "neutro";
+				send.setOnClickListener(null);
 			}
 		}
  
@@ -135,37 +137,13 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 
 	public void onClick(View arg0) {
 		messages.setText("Enviando opções...");
+		SendAnswer sendAnswer = new SendAnswer();
+		sendAnswer.execute("answer#"+answer);
 		up.setText(unavailable);
 		down.setText(unavailable);
 		
-		if (!answer.equals("neutro")) {
-			SendAnswer sendAnswer = new SendAnswer();
-			sendAnswer.execute("answer#"+answer);
-		}
 	}
 	
-    private static String convertStreamToString(InputStream is) {
-    	 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
- 
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return sb.toString();
-    }
-
 	public TextView getUp() {
 		return up;
 	}
@@ -190,4 +168,15 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		this.messages = messages;
 	}
     
+	public boolean isPaused() {
+		return paused;
+	}
+	
+	public static boolean isSessionStarted() {
+		return sessionStarted;
+	}
+	
+	public static void setSessionStarted(boolean sessionStarted) {
+		CinemaClientActivity.sessionStarted = sessionStarted;
+	}
 }
