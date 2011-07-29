@@ -3,11 +3,12 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@drawable/background"
     >
 <TextView
 	android:id="@+id/messages"
-	android:layout_marginBottom="20pt"
-	android:layout_marginTop="20pt"
+	android:layout_marginBottom="10pt"
+	android:layout_marginTop="5pt"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal|top"
@@ -16,22 +17,24 @@
     
 <TextView
 	android:id="@+id/up"
-	android:layout_marginBottom="20pt"
-	android:layout_marginTop="20pt"
+	android:layout_marginBottom="10pt"
+	android:layout_marginTop="5pt"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="sem nova opção"
     android:layout_gravity="center_horizontal|top"
     />
-    
-<Button android:id="@+id/btnSend"
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-	android:text="Mandar"
-	android:layout_gravity="center_vertical|center_horizontal" />
+	
+<ImageButton android:id="@+id/btnImageSend" 
+			 android:layout_width="wrap_content"
+			 android:layout_height="wrap_content" 
+			 android:src="@drawable/iconecinema2" 
+			 android:layout_gravity="center_vertical|center_horizontal"
+			 />
 	
 <TextView android:id="@+id/down"
-	android:layout_marginTop="20pt"
+	android:layout_marginLeft="30pt"
+	android:layout_marginBottom="10pt"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal|bottom"
