@@ -26,8 +26,13 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 	private String answer = "";
 	private boolean paused = false;
 	private static boolean sessionStarted = false;
+	private static 	String ip =
+//					 "189.71.26.51"
+					 "192.168.0.160"
+//					 "150.165.132.171"
+			;
 	
-	private String unavailable = "ainda não disponível";
+	public static String unavailable = "ainda não disponível";
 	
 	private static AnwersReceiver answersReceiver;
 	
@@ -178,5 +183,9 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 	
 	public static void setSessionStarted(boolean sessionStarted) {
 		CinemaClientActivity.sessionStarted = sessionStarted;
+	}
+	
+	public static String getIp() {
+		return ip;
 	}
 }

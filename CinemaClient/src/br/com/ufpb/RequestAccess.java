@@ -16,9 +16,8 @@ public class RequestAccess extends AsyncTask<Void, Void, String>{
 	protected String doInBackground(Void... v) {
 		try{
 			//1. creating a socket to connect to the server
-			String ip = "192.168.0.160";
-//			String ip = "150.165.132.171";
-			requestSocket = new Socket(ip, 2004);
+
+			requestSocket = new Socket(CinemaClientActivity.getIp(), 2004);
 			//2. get Input and Output streams
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
@@ -63,7 +62,7 @@ public class RequestAccess extends AsyncTask<Void, Void, String>{
 	
 	protected void onPostExecute(String result) {
 		CinemaClientActivity.getInstance().getMessages().setText(result);
-		if (result.equals("Sessão inciada")) {
+		if (result.equals("Sessï¿½o inciada")) {
 			CinemaClientActivity.setSessionStarted(true);
 		} else {
 			CinemaClientActivity.setSessionStarted(false);
