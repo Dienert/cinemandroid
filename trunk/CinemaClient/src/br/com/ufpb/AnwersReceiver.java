@@ -6,7 +6,11 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Vibrator;
 import android.widget.TextView;
@@ -14,13 +18,14 @@ import android.widget.TextView;
 
 public class AnwersReceiver extends AsyncTask<Void, Void, String[]> {
 	
-	public AnwersReceiver() {}
+	private ServerSocket providerSocket;
+	private Socket connection = null;
+	private ObjectOutputStream out;
+	private ObjectInputStream in;
+	private String[] messages = {"não recebido", "não recebido"};
+	private int SIMPLE_NOTFICATION_ID;
 	
-	ServerSocket providerSocket;
-	Socket connection = null;
-	ObjectOutputStream out;
-	ObjectInputStream in;
-	String[] messages = {"não recebido", "não recebido"};
+	public AnwersReceiver() {}
 	
 	protected String[] doInBackground(Void... v) {
 		try{
@@ -89,7 +94,36 @@ public class AnwersReceiver extends AsyncTask<Void, Void, String[]> {
 		messages.setText("Novas opções recebidas");
 		AnwersReceiver server = new AnwersReceiver();
 		server.execute();
+		if (activity.isPaused()) {
+			notifyOptions();
+		}
 		
+	}
+	
+	private void notifyOptions() {
+		CinemaClientActivity activity = CinemaClientActivity.getInstance();
+		NotificationManager noticificationMgr = (NotificationManager)activity.getSystemService(CinemaClientActivity.NOTIFICATION_SERVICE);
+		
+		final Notification notification = new Notification(R.drawable.icon, "Novas opções chegaram",System.currentTimeMillis());
+		long[] vibrate = {100,100,200,300};
+		notification.vibrate = vibrate;
+		notification.defaults =Notification.DEFAULT_ALL;
+		notification.flags = Notification.FLAG_AUTO_CANCEL;
+		
+		Context context = activity.getApplicationContext();
+		CharSequence contentTitle = "CinemaClient - Novas opções";
+		CharSequence contentText = "Faça sua escolha";
+		
+		Intent notifyIntent = new Intent(context, CinemaClientActivity.class);
+		
+		notifyIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		
+		PendingIntent intent = PendingIntent.getActivity(activity, 0, notifyIntent, 0);
+		
+		notification.setLatestEventInfo(context, contentTitle, contentText, intent);
+		
+		noticificationMgr.notify(SIMPLE_NOTFICATION_ID, notification);
+
 	}
 
 }

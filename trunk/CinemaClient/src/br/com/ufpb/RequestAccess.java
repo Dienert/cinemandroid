@@ -5,10 +5,11 @@ import java.net.*;
 
 import android.os.AsyncTask;
 public class RequestAccess extends AsyncTask<Void, Void, String>{
-	Socket requestSocket;
-	ObjectOutputStream out;
- 	ObjectInputStream in;
- 	String message;
+	
+	private Socket requestSocket;
+	private ObjectOutputStream out;
+	private ObjectInputStream in;
+	private String message;
  	
 	RequestAccess(){}
 	
@@ -62,5 +63,10 @@ public class RequestAccess extends AsyncTask<Void, Void, String>{
 	
 	protected void onPostExecute(String result) {
 		CinemaClientActivity.getInstance().getMessages().setText(result);
+		if (result.equals("Sessão inciada")) {
+			CinemaClientActivity.setSessionStarted(true);
+		} else {
+			CinemaClientActivity.setSessionStarted(false);
+		}
 	}
 }
