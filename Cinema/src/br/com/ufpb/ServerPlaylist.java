@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
@@ -56,9 +57,11 @@ public class ServerPlaylist implements IServerPlaylist{
 	
 	private HashMap<String, String[]> hashmap;
 	
-	private String answer = "intro";
+	private String currentVideo = "intro";
 	
 	private static ServerPlaylist instance;
+	
+	private int[] votes = new int[] {0,0};
 	
 	public ServerPlaylist(){}
 	
@@ -152,7 +155,7 @@ public class ServerPlaylist implements IServerPlaylist{
 		
 		SimplePlayItem item = new SimplePlayItem();
 		
-		String[] strings = hashmap.get(answer);
+		String[] strings = hashmap.get(currentVideo);
 		
 		String versao = StreamManager.getInstance().getVersao();
 		
@@ -351,11 +354,53 @@ public class ServerPlaylist implements IServerPlaylist{
 		return hashmap;
 	}
 	
-	public String getAnswer() {
-		return answer;
+	public String getCurrentVideo() {
+		return currentVideo;
 	}
 	
-	public void setAnswer(String answer) {
-		this.answer = answer;
+	public void setCurrentVideo(String currentVideo) {
+		this.currentVideo = currentVideo;
 	}
+
+	public String getAnswer() {
+		String opcao0 = hashmap.get(currentVideo)[0];
+		String opcao1 = hashmap.get(currentVideo)[1];
+		if (votes[0] > votes[1]) {
+			System.out.println("Votação: "+opcao0+" "+votes[0]+ " x "+votes[1]+" "+opcao1);
+			votes[0] = 0;
+			votes[1] = 0;
+			return opcao0;
+		} else if (votes[1] > votes[0]){
+			System.out.println("Votação: "+opcao0+" "+votes[0]+ " x "+votes[1]+" "+opcao1);
+			return opcao1;
+		} else {
+			int escolhaRandomica = generateRandomNumber(0, 2);
+			System.out.println("Votação: "+opcao0+" "+votes[0]+ " x "+votes[1]+" "+opcao1);
+			votes[0] = 0;
+			votes[1] = 0;
+			String escolha = hashmap.get(currentVideo)[escolhaRandomica];
+			System.out.println("Escolha randômica: "+escolha);
+			return escolha;
+		}
+	}
+	
+	public void addAnswer(String answer) {
+		String[] strings = hashmap.get(currentVideo);
+		if (strings[0].equals(answer)) {
+			votes[0]++;
+		} else if (strings[0].equals(answer)) {
+			votes[1]++;
+		}
+	}
+	
+	public static void main(String arg[]){
+		int lLimit=0,uLimit=2;
+		int randNumber=generateRandomNumber(lLimit,uLimit);
+		System.out.println("Generated Random Number: "+ randNumber);
+	}
+
+	public static int generateRandomNumber(int st,int end){
+		Random r = new Random();
+		return (r.nextInt(end-st)+st);
+	} 
 }
