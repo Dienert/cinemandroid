@@ -1,43 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/background"
     >
-<TextView
-	android:id="@+id/messages"
-	android:layout_marginBottom="10pt"
-	android:layout_marginTop="5pt"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal|top"
-    android:text="Conectando..."
-    />
+
+
     
 <TextView
 	android:id="@+id/up"
-	android:layout_marginBottom="10pt"
-	android:layout_marginTop="5pt"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_height="68pt"
     android:text="sem nova opção"
     android:layout_gravity="center_horizontal|top"
+    android:layout_marginTop="0pt"
+    android:layout_marginLeft="0pt"
+    android:layout_marginBottom="5pt"
+    android:paddingLeft="40pt"
+    android:paddingTop="30pt"
     />
+<TextView
+	android:id="@+id/messages"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal|top"
+    android:text="Conectando..."
+    android:layout_marginTop="5pt"
+    android:layout_marginLeft="0pt"
+    android:layout_marginBottom="10pt"
+    />	
 	
+
+	   	
+<TextView android:id="@+id/down"
+	android:layout_width="fill_parent"
+	android:layout_height="72pt"
+    android:layout_gravity="center_horizontal|bottom"
+	android:text="sem nova opção" 
+    android:layout_below="@id/up"
+    android:layout_centerHorizontal="true"
+    
+    />
+    
 <ImageButton android:id="@+id/btnImageSend" 
 			 android:layout_width="wrap_content"
 			 android:layout_height="wrap_content" 
 			 android:src="@drawable/iconecinema2" 
 			 android:layout_gravity="center_vertical|center_horizontal"
-			 />
-	
-<TextView android:id="@+id/down"
-	android:layout_marginLeft="30pt"
-	android:layout_marginBottom="10pt"
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal|bottom"
-	android:text="sem nova opção" />
-	
-</LinearLayout>
+    		 android:layout_centerHorizontal="true"
+    		 android:layout_centerVertical="true"
+    		 android:layout_alignTop="@id/down"
+    		 
+			 />    
+</RelativeLayout>
