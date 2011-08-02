@@ -1,23 +1,35 @@
 package br.com.ufpb;
 
+import java.io.IOException;
+
 import android.app.Activity;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.graphics.PorterDuff.Mode;
 
 public class CinemaClientActivity extends Activity implements View.OnClickListener {
 	private TextView up;
@@ -38,7 +50,7 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 					 "192.168.0.160"
 //					 "150.165.132.171"
 			;
-	
+
 	public static String unavailable = "ainda n�o dispon�vel";
 	
 	private static AnwersReceiver answersReceiver;
@@ -60,7 +72,6 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		}
 		
 		setContentView(R.layout.main);
- 
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		sensor = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
  
@@ -91,8 +102,10 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 
 		
 		v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+		
+		
 	}
- 
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -134,11 +147,12 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 			if (y > 5) {
 				if (!up.getText().equals(unavailable)) {
 					up.setTextColor(Color.GREEN);
-					up.setTextSize(25);
+					up.setBackgroundResource(R.drawable.cima);
+					down.setBackgroundDrawable(null);
 					down.setTextColor(Color.RED);
-					down.setTextSize(10);
 					answer = up.getText().toString();
 					send.setOnClickListener(instance);
+					
 				}
 				if(change != 1){
                     v.vibrate(50);
@@ -147,11 +161,12 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 			} else if (y < -7) {
 				if (!up.getText().equals(unavailable)) {
 					up.setTextColor(Color.RED);
-					up.setTextSize(10);
-					down.setTextSize(25);
-					down.setTextColor(Color.GREEN);
+					down.setTextColor(Color.WHITE);
+					down.setBackgroundResource(R.drawable.baixo);
 					answer = down.getText().toString();
 					send.setOnClickListener(instance);
+					up.setBackgroundDrawable(null);
+					
 				}
 				if(change != 2){
                     v.vibrate(50);
@@ -162,9 +177,9 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 				up.setTextColor(Color.GRAY);
 				down.setTextColor(Color.GRAY);
 				answer = "neutro";
-
-				change = 3;
-
+				up.setBackgroundDrawable(null);
+				down.setBackgroundDrawable(null);
+				change = 3;					
 				send.setOnClickListener(null);
 
 			}
