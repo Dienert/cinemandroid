@@ -388,7 +388,7 @@ public class ServerPlaylist implements IServerPlaylist{
 		String[] strings = hashmap.get(currentVideo);
 		if (strings[0].equals(answer)) {
 			votes[0]++;
-		} else if (strings[0].equals(answer)) {
+		} else if (strings[1].equals(answer)) {
 			votes[1]++;
 		}
 	}
