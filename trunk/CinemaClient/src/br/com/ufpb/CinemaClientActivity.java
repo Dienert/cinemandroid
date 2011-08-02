@@ -146,13 +146,12 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 			z = event.values[2];
 			if (y > 5) {
 				if (!up.getText().equals(unavailable)) {
-					up.setTextColor(Color.GREEN);
 					up.setBackgroundResource(R.drawable.cima);
-					down.setBackgroundDrawable(null);
-					down.setTextColor(Color.RED);
 					answer = up.getText().toString();
 					send.setOnClickListener(instance);
-					
+					down.setBackgroundDrawable(null);
+					up.setTextSize(25);
+					down.setTextSize(20);
 				}
 				if(change != 1){
                     v.vibrate(50);
@@ -160,12 +159,12 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 				}
 			} else if (y < -7) {
 				if (!up.getText().equals(unavailable)) {
-					up.setTextColor(Color.RED);
-					down.setTextColor(Color.WHITE);
-					down.setBackgroundResource(R.drawable.baixo);
 					answer = down.getText().toString();
 					send.setOnClickListener(instance);
+					down.setBackgroundResource(R.drawable.baixo2);
 					up.setBackgroundDrawable(null);
+					up.setTextSize(20);
+					down.setTextSize(25);
 					
 				}
 				if(change != 2){
@@ -174,13 +173,13 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 				}
 
 			} else {
-				up.setTextColor(Color.GRAY);
-				down.setTextColor(Color.GRAY);
 				answer = "neutro";
 				up.setBackgroundDrawable(null);
 				down.setBackgroundDrawable(null);
 				change = 3;					
 				send.setOnClickListener(null);
+				up.setTextSize(20);
+				down.setTextSize(20);
 
 			}
 		}
