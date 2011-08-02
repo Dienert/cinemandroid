@@ -6,19 +6,18 @@
     android:background="@drawable/background"
     >
 
-
-    
 <TextView
 	android:id="@+id/up"
     android:layout_width="fill_parent"
-    android:layout_height="68pt"
+    android:layout_height="80pt"
     android:text="sem nova opção"
     android:layout_gravity="center_horizontal|top"
     android:layout_marginTop="0pt"
     android:layout_marginLeft="0pt"
-    android:layout_marginBottom="5pt"
+    android:layout_marginBottom="0pt"
     android:paddingLeft="40pt"
     android:paddingTop="30pt"
+    android:textColor="#fff"
     />
 <TextView
 	android:id="@+id/messages"
@@ -29,28 +28,30 @@
     android:layout_marginTop="5pt"
     android:layout_marginLeft="0pt"
     android:layout_marginBottom="10pt"
+    android:layout_centerHorizontal="true"
     />	
-	
-
-	   	
 <TextView android:id="@+id/down"
 	android:layout_width="fill_parent"
-	android:layout_height="72pt"
+	android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal|bottom"
 	android:text="sem nova opção" 
-    android:layout_below="@id/up"
-    android:layout_centerHorizontal="true"
-    
+	android:layout_below="@id/up"
+	android:layout_centerHorizontal="true"
+	android:layout_marginTop="59pt"
+	android:paddingLeft="5pt"
+	android:textColor="#fff"
     />
-    
 <ImageButton android:id="@+id/btnImageSend" 
 			 android:layout_width="wrap_content"
 			 android:layout_height="wrap_content" 
-			 android:src="@drawable/iconecinema2" 
+			 android:src="@drawable/upload" 
 			 android:layout_gravity="center_vertical|center_horizontal"
     		 android:layout_centerHorizontal="true"
     		 android:layout_centerVertical="true"
-    		 android:layout_alignTop="@id/down"
-    		 
-			 />    
+    		 android:background="@drawable/button"
+/>
+		   	
+
+
+    
 </RelativeLayout>
