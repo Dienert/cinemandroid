@@ -28,8 +28,8 @@
 	
 	<bean id="streamFilenameGenerator" class="br.com.ufpb.CustomFilenameGenerator">
 		<property name="playbackPath">
-<!--			<value>/home/dienert/Desktop/Red5/</value>-->
- 			<value>C:\\red5\\zombies\\</value> 
+			<value>/home/dienert/Desktop/Red5/</value>
+<!--  			<value>C:\\red5\\zombies\\</value>  -->
         	</property>
 	</bean>
 	
