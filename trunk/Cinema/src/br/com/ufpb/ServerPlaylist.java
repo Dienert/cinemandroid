@@ -372,6 +372,8 @@ public class ServerPlaylist implements IServerPlaylist{
 			return opcao0;
 		} else if (votes[1] > votes[0]){
 			System.out.println("Votação: "+opcao0+" "+votes[0]+ " x "+votes[1]+" "+opcao1);
+			votes[0] = 0;
+			votes[1] = 0;
 			return opcao1;
 		} else {
 			int escolhaRandomica = generateRandomNumber(0, 2);

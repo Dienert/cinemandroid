@@ -14,65 +14,71 @@ public class ServerConnection extends Thread {
 	
 	ServerSocket providerSocket;
 	Socket connection = null;
-	ObjectOutputStream out;
-	ObjectInputStream in;
 	String message;
 	
 	@Override
 	public void run()	{
-		while (true) {
-			try{
+		try{
+			providerSocket = new ServerSocket(2004, 10);
+			while (true) {
 				//1. creating a server socket
-				providerSocket = new ServerSocket(2004, 10);
 				//2. Wait for connection
 				System.out.println("Waiting for connection");
 				connection = providerSocket.accept();
-				System.out.println("Connection received from " + connection.getInetAddress().getHostName());
-				//3. get Input and Output streams
-				out = new ObjectOutputStream(connection.getOutputStream());
-				out.flush();
-				in = new ObjectInputStream(connection.getInputStream());
-				String clientIp = connection.getInetAddress().getHostAddress();
-				//4. The two parts communicate via the input and output streams
-				try{
-					message = (String)in.readObject();
-					System.out.println("android> "+message);
-					String[] messages = message.split("#");
-					if (messages[0].equals("answer")) {
-						ServerPlaylist serverPlaylist = ServerPlaylist.getInstance(); 
-						serverPlaylist.addAnswer(messages[1]);
-						out.writeObject("Opção recebida!");
-						out.flush();
-					} else if (messages[0].equals("login")) {
-						if (!PlayItemAnalyzer.ips.contains(clientIp)){
-							PlayItemAnalyzer.ips.add(clientIp);
-							System.out.println("Cadastrei o ip: "+clientIp);
-						} else {
-							System.out.println("Ip já cadastrado: "+clientIp);
+				new Thread () {
+					Socket connectionInThread = connection;
+					ObjectOutputStream out;
+					ObjectInputStream in;
+					public void run() {
+						try {
+							System.out.println("Connection received from " + connectionInThread.getInetAddress().getHostName());
+							//3. get Input and Output streams
+							out = new ObjectOutputStream(connectionInThread.getOutputStream());
+							out.flush();
+							in = new ObjectInputStream(connectionInThread.getInputStream());
+							String clientIp = connectionInThread.getInetAddress().getHostAddress();
+							//4. The two parts communicate via the input and output streams
+							try{
+								message = (String)in.readObject();
+								System.out.println("android> "+message);
+								String[] messages = message.split("#");
+								if (messages[0].equals("answer")) {
+									ServerPlaylist serverPlaylist = ServerPlaylist.getInstance(); 
+									serverPlaylist.addAnswer(messages[1]);
+									out.writeObject("Opção recebida!");
+									out.flush();
+								} else if (messages[0].equals("login")) {
+									if (!PlayItemAnalyzer.ips.contains(clientIp)){
+										PlayItemAnalyzer.ips.add(clientIp);
+										System.out.println("Cadastrei o ip: "+clientIp);
+									} else {
+										System.out.println("Ip já cadastrado: "+clientIp);
+									}
+									out.writeObject("Sessão iniciada");
+									out.flush();
+								}
+							}catch(ClassNotFoundException classnot){
+								System.err.println("Data received in unknown format");
+							}
+						} catch(IOException ioException){
+							ioException.printStackTrace();
+						} finally{
+							//4: Closing connection
+							try{
+								in.close();
+								out.close();
+//								providerSocket.close();
+							}
+							catch(IOException ioException){
+								ioException.printStackTrace();
+							}
 						}
-						out.writeObject("Sessão iniciada");
-						out.flush();
-					}
-				}
-				catch(ClassNotFoundException classnot){
-					System.err.println("Data received in unknown format");
-				}
+					};
+				}.start();
 			}
-			catch(IOException ioException){
-				ioException.printStackTrace();
-			}
-			finally{
-				//4: Closing connection
-				try{
-					in.close();
-					out.close();
-					providerSocket.close();
-				}
-				catch(IOException ioException){
-					ioException.printStackTrace();
-				}
-			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
-	
 }
