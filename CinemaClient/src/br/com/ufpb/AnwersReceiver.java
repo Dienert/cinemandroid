@@ -24,6 +24,7 @@ public class AnwersReceiver extends AsyncTask<Void, Void, String[]> {
 	private ObjectInputStream in;
 	private String[] messages = {CinemaClientActivity.unavailable, CinemaClientActivity.unavailable};
 	private int SIMPLE_NOTFICATION_ID;
+	private boolean cancelled = false;
 	
 	public AnwersReceiver() {}
 	
@@ -83,23 +84,31 @@ public class AnwersReceiver extends AsyncTask<Void, Void, String[]> {
 	}
 	
 	protected void onPostExecute(String[] result) {
-		CinemaClientActivity activity = CinemaClientActivity.getInstance();
-		TextView up = activity.getUp(); 
-		up.setText(result[0]);
-		TextView down = activity.getDown();
-		down.setText(result[1]);
-		if (!up.getText().equals(CinemaClientActivity.unavailable)) {
-			TextView messages = activity.getMessages();
-			Vibrator v = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
-			v.vibrate(600);
-			messages.setText("Novas opções recebidas");
-			if (activity.isPaused()) {
-				notifyOptions();
+		if (!cancelled) {
+			CinemaClientActivity activity = CinemaClientActivity.getInstance();
+			TextView up = activity.getUp(); 
+			up.setText(result[0]);
+			TextView down = activity.getDown();
+			down.setText(result[1]);
+			if (!up.getText().equals(CinemaClientActivity.unavailable)) {
+				TextView messages = activity.getMessages();
+				Vibrator v = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+				v.vibrate(600);
+				messages.setText("Novas opções recebidas");
+				if (activity.isPaused()) {
+					notifyOptions();
+				}
 			}
+			AnwersReceiver server = new AnwersReceiver();
+			server.execute();
 		}
-		AnwersReceiver server = new AnwersReceiver();
-		server.execute();
 		
+	}
+	
+	@Override
+	protected void onCancelled() {
+		super.onCancelled();
+		cancelled = true;
 	}
 	
 	private void notifyOptions() {

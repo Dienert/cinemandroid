@@ -36,11 +36,12 @@
     android:layout_gravity="center_horizontal|bottom"
 	android:text="sem nova opção" 
 	android:layout_below="@id/up"
+	android:layout_marginTop="100pt"
 	android:layout_centerHorizontal="true"
-	android:layout_marginTop="59pt"
 	android:paddingLeft="5pt"
 	android:textColor="#fff"
     />
+<!-- 	android:layout_marginTop="59pt" -->
 <ImageButton android:id="@+id/btnImageSend" 
 			 android:layout_width="wrap_content"
 			 android:layout_height="wrap_content" 

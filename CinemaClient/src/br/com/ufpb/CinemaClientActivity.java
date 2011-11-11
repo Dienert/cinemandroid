@@ -49,9 +49,11 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 //					 "189.71.26.51"
 					 "192.168.0.160"
 //					 "150.165.132.171"
+//					 "150.165.132.136" //wireless -lavid
+//					 "150.165.132.123" //cabeada -lavid
 			;
-
-	public static String unavailable = "ainda nï¿½o disponï¿½vel";
+	
+	public static String unavailable = "ainda não disponível";
 	
 	private static AnwersReceiver answersReceiver;
 	
@@ -72,6 +74,7 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 		}
 		
 		setContentView(R.layout.main);
+ 
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		sensor = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
  
@@ -102,10 +105,8 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 
 		
 		v = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-		
-		
 	}
-	
+ 
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -121,6 +122,7 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 	@Override
 	protected void onStop() {
 		sensorManager.unregisterListener(accelerationListener);
+		answersReceiver.cancel(true);
 		super.onStop();
 	}
 	
@@ -153,10 +155,6 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 					up.setTextSize(25);
 					down.setTextSize(20);
 				}
-				if(change != 1){
-                    v.vibrate(50);
-                    change = 1;
-				}
 			} else if (y < -7) {
 				if (!up.getText().equals(unavailable)) {
 					answer = down.getText().toString();
@@ -167,11 +165,6 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 					down.setTextSize(25);
 					
 				}
-				if(change != 2){
-                    v.vibrate(50);
-                    change = 2;
-				}
-
 			} else {
 				answer = "neutro";
 				up.setBackgroundDrawable(null);
@@ -187,7 +180,7 @@ public class CinemaClientActivity extends Activity implements View.OnClickListen
 	};
 
 	public void onClick(View arg0) {
-		messages.setText("Enviando opÃ§Ãµes...");
+		messages.setText("Enviando opções...");
 		SendAnswer sendAnswer = new SendAnswer();
 		sendAnswer.execute("answer#"+answer);
 		up.setText(unavailable);
